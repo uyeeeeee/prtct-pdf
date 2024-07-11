@@ -32,7 +32,7 @@
                             <input type="file" name="pdfs[]" value="{{ $pdf }}" hidden>
                         @endforeach
                         <button type="submit" class="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Send Email
+                            Send
                         </button>
                     </form>
                 </div>

@@ -9,6 +9,7 @@ Route::get('/email-formatter', [EmailFormatterController::class, 'index'])->name
 Route::post('/email-formatter/preview', [EmailFormatterController::class, 'preview'])->name('email-formatter.preview');
 Route::post('/email-formatter/send', [EmailFormatterController::class, 'send'])->name('email-formatter.send');
 
+
 Route::get('/', function () {
     return view('welcome');
 
