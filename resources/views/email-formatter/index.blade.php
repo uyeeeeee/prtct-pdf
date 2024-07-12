@@ -1,3 +1,4 @@
+<!-- resources/views/email-formatter/index.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -22,7 +23,12 @@
                         <div class="mb-4">
                             <label for="body" class="block text-gray-700 text-sm font-bold mb-2">Body:</label>
                             <textarea name="body" id="body" rows="5" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                            <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+                            <script>
+                                CKEDITOR.replace('body');
+                            </script>
                         </div>
+                       
                         <div class="mb-4">
                             <label for="pdfs" class="block text-gray-700 text-sm font-bold mb-2">PDF Attachments:</label>
                             <input type="file" name="pdfs[]" id="pdfs" multiple accept=".pdf" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -49,7 +55,7 @@
                 <h3 class="text-lg font-semibold mb-2">Subject: <span id="preview-subject"></span></h3>
                 <div class="mb-4">
                     <h4 class="text-md font-semibold mb-2">Body:</h4>
-                    <p id="preview-body" class="whitespace-pre-wrap"></p>
+                    <div id="preview-body" class="whitespace-pre-wrap"></div>
                 </div>
                 <div class="mb-4">
                     <h4 class="text-md font-semibold mb-2">Attachments:</h4>
@@ -71,7 +77,10 @@
         document.getElementById('preview-button').addEventListener('click', function() {
             document.getElementById('preview-to').innerText = document.getElementById('to').value;
             document.getElementById('preview-subject').innerText = document.getElementById('subject').value;
-            document.getElementById('preview-body').innerText = document.getElementById('body').value;
+
+            // Get CKEditor content
+            const editorData = CKEDITOR.instances.body.getData();
+            document.getElementById('preview-body').innerHTML = editorData;
             
             const pdfInput = document.getElementById('pdfs');
             const pdfFiles = pdfInput.files;

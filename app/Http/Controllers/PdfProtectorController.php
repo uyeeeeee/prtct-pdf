@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use Illuminate\Support\Facades\Storage;
-
-
+use PhpZip\ZipFile;
 
 class PdfProtectorController extends Controller
 {
@@ -50,29 +49,27 @@ class PdfProtectorController extends Controller
                 'content' => $protectedContent
             ];
         }
+
         if (count($protectedFiles) == 1) {
             // If only one file, send it as a download
             return response($protectedFiles[0]['content'])
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $protectedFiles[0]['name'] . '"')
-                ->header('X-Download-Triggered', 'true');
+                ->header('Content-Disposition', 'attachment; filename="' . $protectedFiles[0]['name'] . '"');
         } else {
-            // If multiple files, create a zip
-            $zip = new \ZipArchive();
+            // If multiple files, create a zip using PhpZip
+            $zipFile = new ZipFile();
             $zipFileName = 'protected_pdfs_' . time() . '.zip';
             $zipFilePath = storage_path('app/public/' . $zipFileName);
     
-            if ($zip->open($zipFilePath, \ZipArchive::CREATE) === TRUE) {
-                foreach ($protectedFiles as $file) {
-                    $zip->addFromString($file['name'], $file['content']);
-                }
-                $zip->close();
+            foreach ($protectedFiles as $file) {
+                $zipFile->addFromString($file['name'], $file['content']);
             }
+
+            $zipFile->saveAsFile($zipFilePath)->close();
     
             return response()->download($zipFilePath, $zipFileName, [
                 'Content-Type' => 'application/zip',
                 'Content-Disposition' => 'attachment; filename="' . $zipFileName . '"',
-                'X-Download-Triggered' => 'true',
             ])->deleteFileAfterSend(true);
         }
     }
